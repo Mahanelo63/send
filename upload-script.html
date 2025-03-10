@@ -7,13 +7,15 @@ $value='files'; // Enter your table Name;
 // fetching files from database
 $fetchFiles=fetch_files($tableName);
 // uploading files on submit
-if(isset($_POST['submit'])){ 
+if($_SERVER['REQUEST_METHOD']=="POST")
+{
+	
     //  uploading files
     echo upload_files($tableName); 
 }
   function upload_files($tableName){
    
-    $uploadTo = "uploads/"; 
+    $uploadTo = ""; 
     $allowFileExt = array('jpg','png','jpeg','gif','pdf','doc','csv','zip');
     $fileName = array_filter($_FILES['file_name']['name']);
     $fileTempName=$_FILES["file_name"]["tmp_name"];
@@ -35,11 +37,11 @@ if(isset($_POST['submit'])){
     if(in_array($fileExt, $allowFileExt)){ 
         // Upload file to server 
         if(move_uploaded_file($fileTempName[$index],$filePath)){ 
-         $uploadTo = "uploads/".$fileBasename;
+         $uploadTo = $fileBasename;
          // Store Files into database table
          $storeFilesBasename =$filePath ; 
 ; 
-             $uploadTo = "uploads/".$fileBasename;
+             $uploadTo = $fileBasename;
 			 store_files($storeFilesBasename, $tableName);
          }else{ 
          $error = 'File Not uploaded ! try again';
@@ -47,7 +49,7 @@ if(isset($_POST['submit'])){
      }else{
        $error .= $_FILES['file_name']['name'][$index].' - file extensions not allowed<br> ';
      }
-    }  header("location: index.php");
+    }  header("location: index.html");
     
   }
     return $error;
